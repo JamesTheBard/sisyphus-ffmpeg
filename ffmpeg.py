@@ -227,6 +227,7 @@ class Ffmpeg:
             sys.exit(100)
         
         data = Box(data)
+        self.settings.overwrite = data.overwrite
         self.sources = data.sources
         self.output_file = data.output_file
         self.source_maps = [SourceMap(**i) for i in data.source_maps]

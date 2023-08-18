@@ -33,7 +33,8 @@
           },
           "optional": {
             "description": "Make the stream optional.",
-            "type": "boolean"
+            "type": "boolean",
+            "default": false
           }
         },
         "required": [
@@ -73,6 +74,11 @@
     "output_file": {
       "description": "The output file to use.",
       "type": "string"
+    },
+    "overwrite": {
+      "description": "Overwrite the output file if it already exists.",
+      "type": "bool",
+      "default": "false"
     }
   },
   "required": [

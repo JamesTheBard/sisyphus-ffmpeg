@@ -230,18 +230,16 @@ class Ffmpeg:
         Returns:
             str: The entire `ffmpeg` command to run.
         """
-        command = f"{self.ffmpeg_path} "
+        command = list()
+        command.append(f'"{self.ffmpeg_path}"')
         if self.settings.overwrite:
-            command += "-y "
-        command += "-progress pipe:1 "
-        for i in self.sources:
-            command += f'-i "{i}" '
-        for source_map in self.source_maps:
-            command += f"{source_map.cli_options} "
-        for output_map in self.output_maps:
-            command += f"{output_map.cli_options} "
-        command += f'"{self.output_file}"'
-        return command.strip()
+            command.append("-y")
+        command.extend(["-progress", "pipe:1"])
+        [command.append(f'-i "{i}"') for i in self.sources]
+        [command.extend(i.cli_options.split()) for i in self.source_maps]
+        [command.extend(i.cli_options.split()) for i in self.output_maps]
+        command.append(f'"{str(self.output_file.absolute())}"')
+        return ' '.join(command)
 
     def run(self, verbose: bool = False) -> None:
         """Run the `ffmpeg` encode.
@@ -374,12 +372,8 @@ class MediaInfo:
             info = self.data.tracks
         temp = list()
         for idx, t in enumerate(info):
-            is_forced = False
-            is_default = False
-            if t.forced == "Yes":
-                is_forced = True
-            if t.default == "Yes":
-                is_default = True
+            is_forced = True if t.forced == "Yes" else False
+            is_default = True if t.forced == "Yes" else False
             temp.append(
                 StreamInfo(
                     codec=t.codec_id,

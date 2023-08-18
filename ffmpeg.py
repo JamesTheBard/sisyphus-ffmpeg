@@ -1,4 +1,5 @@
 import json
+import platform
 import re
 import shlex
 import shutil
@@ -189,8 +190,8 @@ class Ffmpeg:
         if ffmpeg_path:
             self.ffmpeg_path = Path(ffmpeg_path)
         else:
-            # TODO: Fix this for Windows
-            self.ffmpeg_path = Path(shutil.which("ffmpeg"))
+            binary = "ffmpeg.exe" if platform.system() == "Windows" else "ffmpeg"
+            self.ffmpeg_path = Path(shutil.which(binary))
         self.sources = list()
         self.source_maps = list()
         self.output_maps = list()

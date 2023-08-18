@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sisyphus ffmpeg Schema",
+  "description": "The Sisyphus ffmpeg schema to import `ffmpeg` options.",
+  "type": "object",
+  "properties": {
+    "sources": {
+      "description": "The source files for ffmpeg to use.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "source_maps": {
+      "description": "A map of the sources and the streams they contain.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "description": "The zero-index of the source file to use.",
+            "type": "integer"
+          },
+          "specifier": {
+            "description": "The specifier to use to identify streams in the source.",
+            "type": "string"
+          },
+          "stream": {
+            "description": "The stream in the source file to use.",
+            "type": "integer"
+          },
+          "optional": {
+            "description": "Make the stream optional.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "source"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "output_maps": {
+      "description": "A map of the selected source streams to the output file including options/settings.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "specifier": {
+            "description": "The specifier to use to identify streams in the source.",
+            "type": "string"
+          },
+          "stream": {
+            "description": "The stream to process from the source maps.",
+            "type": "integer"
+          },
+          "options": {
+            "description": "The options to use for processing the stream.",
+            "type": "object"
+          }
+        },
+        "required": [
+          "stream",
+          "options"
+        ],
+        "minItems": 1,
+        "additionalProperties": false
+      }
+    },
+    "output_file": {
+      "description": "The output file to use.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "sources",
+    "source_maps",
+    "output_maps",
+    "output_file"
+  ],
+  "additionalProperties": false
+}

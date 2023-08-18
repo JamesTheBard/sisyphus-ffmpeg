@@ -186,6 +186,35 @@ This JSON example file has the exact same information in it as the "pure Python"
 
 ## Extra Bits
 
+### Progress Bars
+
+The `sisyphus-ffmpeg` module can simplify the output of the encode to only show progress.  This is a bit rudimentary, but you can pass the frame information for the video stream you're encoding and have it display a progress bar.
+
+```python
+from ffmpeg import Ffmpeg, MediaInfo
+
+# Create the Ffmpeg instance and load the configuration.
+ff = Ffmpeg()
+ff.load_from_file("test.json")
+
+# Since we're pulling video from the first source, let's get all of the
+# information from that source.
+info = MediaInfo(source_file=ff.sources[0])
+
+# Pass the video stream information into Ffmpeg. This passes the first video
+# stream information into the settings so the progress bar knows how many
+# frames it needs to track in total.
+ff.settings.video_info = info.video_streams[0]
+
+# Run the encode without any options.
+ff.run()
+```
+
+This should result in a fairly simple progress bar.
+
+![Progress Bar](images/WindowsTerminal_1OkNXgNX5Z.png)
+
+### Media Information
 The `sisyphus-ffmpeg` module also contains a _MediaInfo_-powered class that will list the streams contained in a given media file.  This can save a substantial amount of time if you need to figure out which input streams you want to feed to `ffmpeg`.
 
 ```python

@@ -144,10 +144,17 @@ class OutputMap:
 
 
 class FfmpegMiscSettings:
+    """A quick object to store extra configuration settings with respect to the encode.
+    
+    Attributes:
+        overwrite (bool): Automatically overwrite the output file if it already exists. Defaults to False.
+        progress_bar (bool): Currently not used for anything. Defaults to False.
+        video_info (StreamInfo, optional): Used to populate frame information from the video track. Defaults to None.
+    """
 
     overwrite: bool
     progress_bar: bool
-    video_info: StreamInfo
+    video_info: Optional[StreamInfo]
 
     def __init__(self):
         self.overwrite = False

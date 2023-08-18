@@ -175,3 +175,41 @@ This JSON example file has the exact same information in it as the "pure Python"
   "output_file": "/shared/output_file.mkv"
 }
 ```
+
+## Extra Bits
+
+The `sisyphus-ffmpeg` module also contains a _MediaInfo_-powered class that will list the streams contained in a given media file.  This can save a substantial amount of time if you need to figure out which input streams you want to feed to `ffmpeg`.
+
+```python
+from ffmpeg import MediaInfo
+
+# Load the source file into MediaInfo
+info = MediaInfo(source_file="test.mkv")
+```
+
+To get all of the streams, you can use the `streams` property to get all of them, or go more specific with `audio_streams`, `video_streams`, or `subtitle_streams`.  Regardless of the property, the results will always be zero indexed.  However, when specifying a type of stream, they will be zero indexed as part of that type to mirror how stream specifiers work in `ffmpeg`.
+
+```python
+# To list all of the streams/tracks in the file:
+[print(f'- {i}') for i in info.streams]
+```
+
+```
+- StreamInfo(codec=None, stream=0, language=None, bitrate=None, forced=False, default=False, frames=34095, stream_type='General', title='Cool Video Show Title', channels=None)
+- StreamInfo(codec='V_MPEGH/ISO/HEVC', stream=1, language='en', bitrate=5017364, forced=False, default=True, frames=34095, stream_type='Video', title='Cool Video Show Title', channels=None)
+- StreamInfo(codec='A_AC3', stream=2, language='ja', bitrate=192000, forced=False, default=True, frames=44439, stream_type='Audio', title='Stereo', channels=2)
+- StreamInfo(codec='A_OPUS', stream=3, language='en', bitrate=122130, forced=False, default=False, frames=23701, stream_type='Audio', title='Surround 5.1', channels=2)
+- StreamInfo(codec='S_TEXT/ASS', stream=4, language='en', bitrate=2473, forced=False, default=True, frames=842, stream_type='Text', title='Full Subtitles', channels=None)
+- StreamInfo(codec='S_TEXT/ASS', stream=5, language='en', bitrate=2484, forced=False, default=False, frames=511, stream_type='Text', title='Signs and Songs', channels=None)
+- StreamInfo(codec=None, stream=6, language=None, bitrate=None, forced=False, default=False, frames=None, stream_type='Menu', title=None, channels=None)
+```
+
+```python
+# For just the audio streams
+[print(f'- {i}') for i in info.audio_streams]
+```
+
+```
+- StreamInfo(codec='A_AC3', stream=0, language='ja', bitrate=192000, forced=False, default=True, frames=44439, stream_type='Audio', title='Stereo', channels=2)
+- StreamInfo(codec='A_OPUS', stream=1, language='en', bitrate=122130, forced=False, default=False, frames=23701, stream_type='Audio', title='Surround 5.1', channels=2)
+```

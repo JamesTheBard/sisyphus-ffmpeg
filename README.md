@@ -34,7 +34,9 @@ ff.source_maps = [
 # can be processed via the output map.  The streams are zero-indexed and
 # based on the order of the source maps of the previous section.
 
-# Stream 0 is the video from source 0 (the 'mkv' file)
+# The 0th video stream from the source map is the first entry: the video
+# file. Another way of writing this would be to just remove the specifier
+# which would pull the 0th stream overall from the source map section.
 ff.output_maps.append(
     OutputMap(
         stream=0, 
@@ -55,10 +57,13 @@ ff.output_maps.append(
     )
 )
 
-# Stream 1 is the audio file from source 1 (the 'ac3' file)
+# The 0th audio stream from the source map is the second entry: the audio
+# file.  Another way of writing this would be to remove the specifier and
+# specify the 1st track which selects the 1st track overall from the source
+# map.
 ff.output_maps.append(
     OutputMap(
-        stream=1, 
+        stream=0, 
         specifier="Audio", 
         options={
             "codec": "libopus",
@@ -72,10 +77,13 @@ ff.output_maps.append(
     )
 )
 
-# Stream 2 is the subtitles stream from the first source (the 'mkv' file)
+# The 0th subtitle stream from the source map is the third entry: the MKV
+# file.  Again, another way of writing this would be to remove the specifier
+# and specify the 2nd track.  This selects the 2nd overall track from the
+# source map.
 ff.output_maps.append(
     OutputMap(
-        stream=2,
+        stream=0,
         specifier="Subtitles",
         options={
             "codec": "copy"
@@ -195,13 +203,11 @@ To get all of the streams, you can use the `streams` property to get all of them
 ```
 
 ```
-- StreamInfo(codec=None, stream=0, language=None, bitrate=None, forced=False, default=False, frames=34095, stream_type='General', title='Cool Video Show Title', channels=None)
-- StreamInfo(codec='V_MPEGH/ISO/HEVC', stream=1, language='en', bitrate=5017364, forced=False, default=True, frames=34095, stream_type='Video', title='Cool Video Show Title', channels=None)
-- StreamInfo(codec='A_AC3', stream=2, language='ja', bitrate=192000, forced=False, default=True, frames=44439, stream_type='Audio', title='Stereo', channels=2)
-- StreamInfo(codec='A_OPUS', stream=3, language='en', bitrate=122130, forced=False, default=False, frames=23701, stream_type='Audio', title='Surround 5.1', channels=2)
-- StreamInfo(codec='S_TEXT/ASS', stream=4, language='en', bitrate=2473, forced=False, default=True, frames=842, stream_type='Text', title='Full Subtitles', channels=None)
-- StreamInfo(codec='S_TEXT/ASS', stream=5, language='en', bitrate=2484, forced=False, default=False, frames=511, stream_type='Text', title='Signs and Songs', channels=None)
-- StreamInfo(codec=None, stream=6, language=None, bitrate=None, forced=False, default=False, frames=None, stream_type='Menu', title=None, channels=None)
+- StreamInfo(codec='V_MPEGH/ISO/HEVC', stream=0, language='en', bitrate=5017364, forced=False, default=False, frames=34095, stream_type='Video', title='Cool Video Show Title', channels=None)
+- StreamInfo(codec='A_AC3', stream=1, language='ja', bitrate=192000, forced=False, default=False, frames=44439, stream_type='Audio', title='Stereo', channels=2)
+- StreamInfo(codec='A_OPUS', stream=2, language='en', bitrate=122130, forced=False, default=False, frames=23701, stream_type='Audio', title='Surround 5.1', channels=2)
+- StreamInfo(codec='S_TEXT/ASS', stream=3, language='en', bitrate=2473, forced=False, default=False, frames=842, stream_type='Text', title='Full Subtitles [MTBB]', channels=None)
+- StreamInfo(codec='S_TEXT/ASS', stream=4, language='en', bitrate=2484, forced=False, default=False, frames=511, stream_type='Text', title='Signs and Songs [Judas]', channels=None)
 ```
 
 The example for just looking at the audio streams is as simple:

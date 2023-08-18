@@ -369,7 +369,7 @@ class MediaInfo:
         if category != "All":
             info = [i for i in self.data.tracks if i.track_type == category]
         else:
-            info = self.data.tracks
+            info = [i for i in self.data.tracks if i.track_type not in ["Menu", "General"]]
         temp = list()
         for idx, t in enumerate(info):
             is_forced = True if t.forced == "Yes" else False

@@ -204,6 +204,8 @@ To get all of the streams, you can use the `streams` property to get all of them
 - StreamInfo(codec=None, stream=6, language=None, bitrate=None, forced=False, default=False, frames=None, stream_type='Menu', title=None, channels=None)
 ```
 
+The example for just looking at the audio streams is as simple:
+
 ```python
 # For just the audio streams
 [print(f'- {i}') for i in info.audio_streams]

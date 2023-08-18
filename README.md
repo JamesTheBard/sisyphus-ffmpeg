@@ -206,8 +206,8 @@ To get all of the streams, you can use the `streams` property to get all of them
 - StreamInfo(codec='V_MPEGH/ISO/HEVC', stream=0, language='en', bitrate=5017364, forced=False, default=False, frames=34095, stream_type='Video', title='Cool Video Show Title', channels=None)
 - StreamInfo(codec='A_AC3', stream=1, language='ja', bitrate=192000, forced=False, default=False, frames=44439, stream_type='Audio', title='Stereo', channels=2)
 - StreamInfo(codec='A_OPUS', stream=2, language='en', bitrate=122130, forced=False, default=False, frames=23701, stream_type='Audio', title='Surround 5.1', channels=2)
-- StreamInfo(codec='S_TEXT/ASS', stream=3, language='en', bitrate=2473, forced=False, default=False, frames=842, stream_type='Text', title='Full Subtitles [MTBB]', channels=None)
-- StreamInfo(codec='S_TEXT/ASS', stream=4, language='en', bitrate=2484, forced=False, default=False, frames=511, stream_type='Text', title='Signs and Songs [Judas]', channels=None)
+- StreamInfo(codec='S_TEXT/ASS', stream=3, language='en', bitrate=2473, forced=False, default=False, frames=842, stream_type='Text', title='Full Subtitles', channels=None)
+- StreamInfo(codec='S_TEXT/ASS', stream=4, language='en', bitrate=2484, forced=False, default=False, frames=511, stream_type='Text', title='Signs and Songs', channels=None)
 ```
 
 The example for just looking at the audio streams is as simple:

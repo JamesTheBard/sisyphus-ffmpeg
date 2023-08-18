@@ -77,7 +77,7 @@
     },
     "overwrite": {
       "description": "Overwrite the output file if it already exists.",
-      "type": "bool",
+      "type": "boolean",
       "default": "false"
     }
   },

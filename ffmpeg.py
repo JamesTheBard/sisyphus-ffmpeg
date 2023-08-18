@@ -9,6 +9,7 @@ import time
 from pathlib import Path
 from typing import List, NamedTuple, Optional, Union
 
+import box
 import pymediainfo
 import jsonschema
 from box import Box
@@ -149,7 +150,7 @@ class FfmpegMiscSettings:
     
     Attributes:
         overwrite (bool): Automatically overwrite the output file if it already exists. Defaults to False.
-        progress_bar (bool): Currently not used for anything. Defaults to False.
+        progress_bar (bool): Enables the progress bar. Defaults to False.
         video_info (StreamInfo, optional): Used to populate frame information from the video track. Defaults to None.
     """
 
@@ -227,7 +228,10 @@ class Ffmpeg:
             sys.exit(100)
         
         data = Box(data)
-        self.settings.overwrite = data.overwrite
+        try:
+            self.settings.overwrite = data.overwrite
+        except box.exceptions.BoxKeyError:
+            pass
         self.sources = data.sources
         self.output_file = data.output_file
         self.source_maps = [SourceMap(**i) for i in data.source_maps]
@@ -259,7 +263,9 @@ class Ffmpeg:
         command = shlex.split(self.generate_command())
         if verbose:
             subprocess.run(command)
-        else:
+            return
+        
+        if self.settings.progress_bar and self.settings.video_info:
             frames = self.settings.video_info.frames
             progress = Progress(
                 TextColumn("[#ffff00]»[bold green] encode"),
@@ -290,6 +296,10 @@ class Ffmpeg:
                         progress.update(task, completed=int(m.group(1)))
             progress.update(task, completed=frames)
             progress.stop()
+            return
+        
+        subprocess.call(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        
 
     @property
     def output_file(self) -> Path:

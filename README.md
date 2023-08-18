@@ -206,7 +206,10 @@ info = MediaInfo(source_file=ff.sources[0])
 # frames it needs to track in total.
 ff.settings.video_info = info.video_streams[0]
 
-# Run the encode without any options.
+# Enable the progress bar.
+ff.settings.progress_bar = True
+
+# Run the encode without any options and enjoy!
 ff.run()
 ```
 

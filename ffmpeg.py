@@ -10,8 +10,8 @@ from pathlib import Path
 from typing import List, NamedTuple, Optional, Union
 
 import box
-import pymediainfo
 import jsonschema
+import pymediainfo
 from box import Box
 from pymediainfo import MediaInfo as PyMediaInfo
 from rich.progress import BarColumn, Progress, TextColumn, TimeRemainingColumn
@@ -147,7 +147,7 @@ class OutputMap:
 
 class FfmpegMiscSettings:
     """A quick object to store extra configuration settings with respect to the encode.
-    
+
     Attributes:
         overwrite (bool): Automatically overwrite the output file if it already exists. Defaults to False.
         progress_bar (bool): Enables the progress bar. Defaults to False.
@@ -204,11 +204,11 @@ class Ffmpeg:
         Args:
             file_path (Union[Path, str]): The JSON file to load.
         """
-        
+
         file_path = Path(file_path)
         with file_path.open('r') as f:
             data = Box(json.load(f))
-        
+
         self.load_from_object(data)
 
     def load_from_object(self, data: Union[Box, dict]) -> None:
@@ -220,13 +220,14 @@ class Ffmpeg:
         schema = Path("schema/ffmpeg.schema.json")
         with schema.open('r') as f:
             schema_data = json.load(f)
-            
+
         try:
             jsonschema.validate(data, schema_data)
         except jsonschema.ValidationError as e:
-            print(f"Could not validate the JSON/object data against the schema: {e.message}")
+            print(
+                f"Could not validate the JSON/object data against the schema: {e.message}")
             sys.exit(100)
-        
+
         data = Box(data)
         try:
             self.settings.overwrite = data.overwrite
@@ -264,7 +265,7 @@ class Ffmpeg:
         if verbose:
             subprocess.run(command)
             return
-        
+
         if self.settings.progress_bar and self.settings.video_info:
             frames = self.settings.video_info.frames
             progress = Progress(
@@ -297,9 +298,9 @@ class Ffmpeg:
             progress.update(task, completed=frames)
             progress.stop()
             return
-        
-        subprocess.call(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        
+
+        subprocess.call(command, stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL)
 
     @property
     def output_file(self) -> Path:
@@ -388,7 +389,8 @@ class MediaInfo:
         if category != "All":
             info = [i for i in self.data.tracks if i.track_type == category]
         else:
-            info = [i for i in self.data.tracks if i.track_type not in ["Menu", "General"]]
+            info = [i for i in self.data.tracks if i.track_type not in [
+                "Menu", "General"]]
         temp = list()
         for idx, t in enumerate(info):
             is_forced = True if t.forced == "Yes" else False

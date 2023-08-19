@@ -100,6 +100,8 @@ ff.run(verbose=True)
 
 ### From a JSON file
 
+To use JSON to populate the encoder settings, it must validate successfully against the included [JSON schema file](schema/ffmpeg.schema.json).  It's not very complicated, and most of the options are used in the example below.
+
 The Python part is fairly straightforward:
 ```python
 from ffmpeg import Ffmpeg
@@ -189,6 +191,8 @@ This JSON example file has the exact same information in it as the "pure Python"
 ### Progress Bars
 
 The `sisyphus-ffmpeg` module can simplify the output of the encode to only show progress.  This is a bit rudimentary, but you can pass the frame information for the video stream you're encoding and have it display a progress bar.
+
+Basically it requires the `Ffmpeg.settings.progress_bar` to be set to `True`, that you provide the video information from the source with the video information in it, and that when running the encode you do not enable `verbose`.
 
 ```python
 from ffmpeg import Ffmpeg, MediaInfo

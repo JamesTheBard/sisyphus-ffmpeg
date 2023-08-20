@@ -4,7 +4,7 @@ import shutil
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 from box import Box
 
@@ -40,11 +40,28 @@ class StreamInfo:
 
 
 class Ffprobe:
+    """A class to grab stream information via `ffprobe` for media files.
 
+    Attributes:
+        count_streams (bool): Whether to have `ffprobe` count the frames of the streams in the file manually. Defaults to False.
+        ffprobe_path (Path): The location of the `ffprobe` binary.
+        media_path (Path): The location of the media file to get the information from.
+        streams (List[StreamInfo]): The stream information associated with the media file.
+    """
+
+    count_frames: bool = False
     ffprobe_path: Path
     media_path: Path
+    streams: List[StreamInfo]
 
     def __init__(self, media_path: Union[str, Path], ffprobe_path: Union[str, Path] = None, count_frames: bool = False):
+        """Create an instance of the `Ffprobe` class.
+
+        Args:
+            media_path (Union[str, Path]): The path to the media file to analyze.
+            ffprobe_path (Union[str, Path], optional): The path to the `ffprobe` binary. Defaults to None.
+            count_frames (bool, optional): Whether to have `ffprobe` count the frames of the embedded streams. Defaults to False.
+        """
         if ffprobe_path:
             self.ffprobe_path = Path(ffprobe_path)
         else:
@@ -54,12 +71,17 @@ class Ffprobe:
         self.count_frames = count_frames
         self.streams = self.process_media()
 
-    def process_media(self) -> Box:
-        command_options = [self.ffprobe_path, "-v",
+    def process_media(self) -> List[StreamInfo]:
+        """Process the streams of the media file and return the information
+
+        Returns:
+            List[StreamInfo]: A list of StreamInfo objects containing the stream information.
+        """
+        command_options = [str(self.ffprobe_path), "-v",
                            "quiet", "-show_streams", "-print_format", "json"]
         if self.count_frames:
             command_options.append("-count_frames")
-        command_options.append(self.media_path)
+        command_options.append(str(self.media_path))
         output = Box(json.loads(subprocess.check_output(command_options)))
 
         streams = list()
@@ -98,7 +120,15 @@ class Ffprobe:
             )
         return streams
 
-    def get_streams(self, stream_type: str = "all"):
+    def get_streams(self, stream_type: str = "all") -> List[StreamInfo]:
+        """Get all of the streams or all of the streams associated with a given stream type.
+
+        Args:
+            stream_type (str, optional): The category of streams to get. Defaults to "all".
+
+        Returns:
+            List[StreamInfo]: A list of StreamInfo objects containing the stream data.
+        """
         if stream_type != "all":
             streams = [i for i in self.streams if i.stream_type == stream_type]
         else:
@@ -112,7 +142,8 @@ class Ffprobe:
 
 
 if __name__ == "__main__":
-    a = Ffprobe("test1.mkv")
+    a = Ffprobe("test.mkv")
+    print(a.ffprobe_path)
     [print(f'- {i}') for i in a.get_streams()]
     print()
     [print(f'- {i}') for i in a.get_streams('audio')]

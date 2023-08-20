@@ -223,7 +223,7 @@ This should result in a fairly simple progress bar.
 ![Progress Bar](images/WindowsTerminal_1OkNXgNX5Z.png)
 
 ### Media Information
-The `sisyphus-ffmpeg` module also contains a _FFProbe_-powered class that will list the streams contained in a given media file.  This can save a substantial amount of time if you need to figure out which input streams you want to feed to `ffmpeg`.
+The `sisyphus-ffmpeg` module also contains an `ffprobe`-powered class that will list the streams contained in a given media file.  This can save a substantial amount of time if you need to figure out which input streams you want to feed to `ffmpeg`.
 
 ```python
 from ffprobe import Ffprobe
@@ -232,7 +232,7 @@ from ffprobe import Ffprobe
 info = Ffprobe(media_path="test.mkv")
 ```
 
-To get all of the streams, you can use the `streams` property to get all of them, or go more specific with `audio_streams`, `video_streams`, or `subtitle_streams`.  Regardless of the property, the results will always be zero indexed.  However, when specifying a type of stream, they will be zero indexed as part of that type to mirror how stream specifiers work in `ffmpeg`.
+To get all of the streams, you can use the `get_streams()` method.  If you want to get more granular, you can specify a stream type as an argument.  Regardless of the stream type, they will all be zero indexed as part of that type to mirror how stream specifiers work in `ffmpeg`.
 
 ```python
 # To list all of the streams/tracks in the file:

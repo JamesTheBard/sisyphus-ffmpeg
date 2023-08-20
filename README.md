@@ -195,7 +195,8 @@ The `sisyphus-ffmpeg` module can simplify the output of the encode to only show 
 Basically it requires the `Ffmpeg.settings.progress_bar` to be set to `True`, that you provide the video information from the source with the video information in it, and that when running the encode you do not enable `verbose`.
 
 ```python
-from ffmpeg import Ffmpeg, MediaInfo
+from ffmpeg import Ffmpeg
+from ffprobe import Ffprobe
 
 # Create the Ffmpeg instance and load the configuration.
 ff = Ffmpeg()
@@ -203,12 +204,12 @@ ff.load_from_file("test.json")
 
 # Since we're pulling video from the first source, let's get all of the
 # information from that source.
-info = MediaInfo(source_file=ff.sources[0])
+info = Ffprobe(media_path=ff.sources[0])
 
 # Pass the video stream information into Ffmpeg. This passes the first video
 # stream information into the settings so the progress bar knows how many
 # frames it needs to track in total.
-ff.settings.video_info = info.video_streams[0]
+ff.settings.video_info = info.get_streams('video')[0]
 
 # Enable the progress bar.
 ff.settings.progress_bar = True
@@ -222,38 +223,42 @@ This should result in a fairly simple progress bar.
 ![Progress Bar](images/WindowsTerminal_1OkNXgNX5Z.png)
 
 ### Media Information
-The `sisyphus-ffmpeg` module also contains a _MediaInfo_-powered class that will list the streams contained in a given media file.  This can save a substantial amount of time if you need to figure out which input streams you want to feed to `ffmpeg`.
+The `sisyphus-ffmpeg` module also contains a _FFProbe_-powered class that will list the streams contained in a given media file.  This can save a substantial amount of time if you need to figure out which input streams you want to feed to `ffmpeg`.
 
 ```python
-from ffmpeg import MediaInfo
+from ffprobe import Ffprobe
 
 # Load the source file into MediaInfo
-info = MediaInfo(source_file="test.mkv")
+info = Ffprobe(media_path="test.mkv")
 ```
 
 To get all of the streams, you can use the `streams` property to get all of them, or go more specific with `audio_streams`, `video_streams`, or `subtitle_streams`.  Regardless of the property, the results will always be zero indexed.  However, when specifying a type of stream, they will be zero indexed as part of that type to mirror how stream specifiers work in `ffmpeg`.
 
 ```python
 # To list all of the streams/tracks in the file:
-[print(f'- {i}') for i in info.streams]
+[print(f'- {i}') for i in info.get_streams()]
 ```
 
+Output:
+
 ```
-- StreamInfo(codec='V_MPEGH/ISO/HEVC', stream=0, language='en', bitrate=5017364, forced=False, default=False, frames=34095, stream_type='Video', title='Cool Video Show Title', channels=None)
-- StreamInfo(codec='A_AC3', stream=1, language='ja', bitrate=192000, forced=False, default=False, frames=44439, stream_type='Audio', title='Stereo', channels=2)
-- StreamInfo(codec='A_OPUS', stream=2, language='en', bitrate=122130, forced=False, default=False, frames=23701, stream_type='Audio', title='Surround 5.1', channels=2)
-- StreamInfo(codec='S_TEXT/ASS', stream=3, language='en', bitrate=2473, forced=False, default=False, frames=842, stream_type='Text', title='Full Subtitles', channels=None)
-- StreamInfo(codec='S_TEXT/ASS', stream=4, language='en', bitrate=2484, forced=False, default=False, frames=511, stream_type='Text', title='Signs and Songs', channels=None)
+- StreamInfo(codec='hevc', stream=0, language='eng', bitrate=5017364, forced=False, default=True, frames=34095, stream_type='video', codec_long='H.265 / HEVC (High Efficiency Video Coding)', title='Cool Video Title', channels=None)
+- StreamInfo(codec='ac3', stream=1, language='jpn', bitrate=192000, forced=False, default=True, frames=44439, stream_type='audio', codec_long='ATSC A/52A (AC-3)', title='Stereo', channels=2)
+- StreamInfo(codec='opus', stream=2, language='eng', bitrate=122130, forced=False, default=False, frames=23701, stream_type='audio', codec_long='Opus (Opus Interactive Audio Codec)', title='Surround 5.1', channels=2)
+- StreamInfo(codec='ass', stream=3, language='eng', bitrate=2473, forced=False, default=True, frames=842, stream_type='subtitle', codec_long='ASS (Advanced SSA) subtitle', title='Full Subtitles', channels=None)
+- StreamInfo(codec='ass', stream=4, language='eng', bitrate=2484, forced=False, default=False, frames=511, stream_type='subtitle', codec_long='ASS (Advanced SSA) subtitle', title='Signs and Songs', channels=None)
 ```
 
 The example for just looking at the audio streams is as simple:
 
 ```python
 # For just the audio streams
-[print(f'- {i}') for i in info.audio_streams]
+[print(f'- {i}') for i in info.get_streams("audio")]
 ```
 
+Output:
+
 ```
-- StreamInfo(codec='A_AC3', stream=0, language='ja', bitrate=192000, forced=False, default=True, frames=44439, stream_type='Audio', title='Stereo', channels=2)
-- StreamInfo(codec='A_OPUS', stream=1, language='en', bitrate=122130, forced=False, default=False, frames=23701, stream_type='Audio', title='Surround 5.1', channels=2)
+- StreamInfo(codec='ac3', stream=0, language='jpn', bitrate=192000, forced=False, default=True, frames=44439, stream_type='audio', codec_long='ATSC A/52A (AC-3)', title='Stereo', channels=2)
+- StreamInfo(codec='opus', stream=1, language='eng', bitrate=122130, forced=False, default=False, frames=23701, stream_type='audio', codec_long='Opus (Opus Interactive Audio Codec)', title='Surround 5.1', channels=2)
 ```

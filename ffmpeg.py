@@ -7,41 +7,14 @@ import subprocess
 import sys
 import time
 from pathlib import Path
-from typing import List, NamedTuple, Optional, Union
+from typing import List, Optional, Union
 
 import box
 import jsonschema
-import pymediainfo
 from box import Box
-from pymediainfo import MediaInfo as PyMediaInfo
 from rich.progress import BarColumn, Progress, TextColumn, TimeRemainingColumn
 
-
-class StreamInfo(NamedTuple):
-    """A container for specific track information from the MediaInfo library
-
-    Attributes:
-        codec (str): The CODEC associated with the track
-        track (int): The zero-index track value of the media file
-        language (str): The two character language code of the track
-        bitrate (int, optional): The bitrate of the track. Defaults to None.
-        forced (bool): Whether the track is forced
-        default (bool): Whether the track is selected by default
-        frames (int, optional): The number of frames associated with the track. Defaults to None.
-        stream_type (str): The track type associated with the track
-        title (str, optional): The title of the track. Defaults to None.
-        channels (int, optional): The number of audio channels associated with the track. Defaults to None.
-    """
-    codec: str
-    stream: int
-    language: str
-    bitrate: Optional[int]
-    forced: bool
-    default: bool
-    frames: Optional[int]
-    stream_type: str
-    title: Optional[str] = None
-    channels: Optional[int] = None
+from ffprobe import StreamInfo
 
 
 class SourceMap:
@@ -319,124 +292,6 @@ class Ffmpeg:
             path (Union[str, Path]): The path to use for the output file.
         """
         self.__output = Path(path)
-
-
-class MediaInfo:
-    """A quick wrapper class for the MediaInfo library to get track information from a given media file.
-
-    Attributes:
-        source_file (Path): The source file to get the information of.
-        data (PyMediaInfo): The data returned from the parsing of the source file.
-    """
-
-    source_file: Path
-    data: PyMediaInfo
-
-    def __init__(self, source_file: Union[Path, str]):
-        """Initialize an instance of the MediaInfo object.
-
-        Args:
-            source_file (Union[Path, str]): The source file to parse track/stream information from.
-        """
-        self.source_file = Path(source_file)
-        self.data = PyMediaInfo.parse(self.source_file)
-
-    @property
-    def video_streams(self) -> List[StreamInfo]:
-        """Return all video stream information and zero-index the streams.
-
-        Returns:
-            List[StreamInfo]: A list of StreamInfo objects.
-        """
-        return self.process_streams("Video")
-
-    @property
-    def audio_streams(self) -> List[StreamInfo]:
-        """Return all audio stream information and zero-index the streams.
-
-        Returns:
-            List[StreamInfo]: A list of StreamInfo objects.
-        """
-        return self.process_streams("Audio")
-
-    @property
-    def subtitle_streams(self) -> List[StreamInfo]:
-        """Return all subtitle stream information and zero-index the streams.
-
-        Returns:
-            List[StreamInfo]: A list of StreamInfo objects.
-        """
-        return self.process_streams("Text")
-
-    @property
-    def streams(self) -> List[StreamInfo]:
-        """Return all streams information and zero-index the streams.
-
-        Returns:
-            List[StreamInfo]: A list of StreamInfo objects.
-        """
-        return self.process_streams("All")
-
-    def process_streams(self, category: str) -> List[StreamInfo]:
-        """Process all the streams and return a list of StreamInfo objects based on the category given.
-
-        Args:
-            category (str): The category of stream to return.
-
-        Returns:
-            List[StreamInfo]: A list of StreamInfo objects which are zero-indexed.
-        """
-        if category != "All":
-            info = [i for i in self.data.tracks if i.track_type == category]
-        else:
-            info = [i for i in self.data.tracks if i.track_type not in [
-                "Menu", "General"]]
-        temp = list()
-        for idx, t in enumerate(info):
-            is_forced = True if t.forced == "Yes" else False
-            is_default = True if t.forced == "Yes" else False
-            temp.append(
-                StreamInfo(
-                    codec=t.codec_id,
-                    stream=idx,
-                    language=t.language,
-                    bitrate=t.bit_rate,
-                    channels=t.channel_s,
-                    forced=is_forced,
-                    default=is_default,
-                    title=t.title,
-                    frames=int(t.frame_count) if t.frame_count else None,
-                    stream_type=t.track_type,
-                )
-            )
-        return temp
-
-    @property
-    def video_streams_raw(self) -> List[pymediainfo.Track]:
-        """Return all of the raw video track information from the MediaInfo library.
-
-        Returns:
-            List[pymediainfo.Track]: A list of MediaInfo track information from the MediaInfo library.
-        """
-        return [i for i in self.data.tracks if i.track_type == "Video"]
-
-    @property
-    def audio_streams_raw(self) -> List[pymediainfo.Track]:
-        """Return all of the raw audio track information from the MediaInfo library.
-
-        Returns:
-            List[pymediainfo.Track]: A list of MediaInfo track information from the MediaInfo library.
-        """
-        return [i for i in self.data.tracks if i.track_type == "Audio"]
-
-    @property
-    def subtitle_streams_raw(self) -> List[pymediainfo.Track]:
-        """Return all of the raw subtitle track information from the MediaInfo library.
-
-        Returns:
-            List[pymediainfo.Track]: A list of MediaInfo track information from the MediaInfo library.
-        """
-        return [i for i in self.data.tracks if i.track_type == "Text"]
 
 
 if __name__ == "__main__":

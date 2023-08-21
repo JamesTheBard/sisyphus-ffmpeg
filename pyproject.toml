@@ -9,7 +9,6 @@ packages = [{include = "ffmpeg.py"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-pymediainfo = "^6.0.1"
 rich = "^13.5.2"
 python-box = "^7.0.1"
 jsonschema = "^4.19.0"

@@ -160,3 +160,6 @@ cython_debug/
 #.idea/
 *.mkv
 *.avi
+
+# Poetry-specific stuff
+poetry.lock

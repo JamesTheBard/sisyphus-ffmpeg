@@ -239,7 +239,7 @@ class Ffmpeg:
             subprocess.run(command)
             return
 
-        if not self.settings.video_info:
+        if not self.settings.video_info and self.settings.progress_bar:
             self.settings.video_info = self.get_primary_video_information()
 
         if self.settings.progress_bar and self.settings.video_info:

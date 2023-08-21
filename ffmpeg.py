@@ -296,6 +296,8 @@ class Ffmpeg:
                 continue
             elif source_map.specifier == "v":
                 return info.get_streams("video")[source_map.stream]
+        
+        return None
                 
 
     @property

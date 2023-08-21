@@ -14,7 +14,7 @@ import jsonschema
 from box import Box
 from rich.progress import BarColumn, Progress, TextColumn, TimeRemainingColumn
 
-from ffprobe import StreamInfo
+from ffprobe import StreamInfo, Ffprobe
 
 
 class SourceMap:
@@ -239,6 +239,9 @@ class Ffmpeg:
             subprocess.run(command)
             return
 
+        if not self.settings.video_info:
+            self.settings.video_info = self.get_primary_video_information()
+
         if self.settings.progress_bar and self.settings.video_info:
             frames = self.settings.video_info.frames
             progress = Progress(
@@ -274,6 +277,26 @@ class Ffmpeg:
 
         subprocess.call(command, stdout=subprocess.DEVNULL,
                         stderr=subprocess.DEVNULL)
+        
+    def get_primary_video_information(self) -> Optional[StreamInfo]:
+        """Parse all of the sources maps and return the video stream information if present.
+
+        Returns:
+            Optional[StreamInfo]: The StreamInfo object associated with the first video track. Defaults to None.
+        """
+        if not self.source_maps or not self.sources:
+            return None
+        
+        for source_map in self.source_maps:
+            info = Ffprobe(self.sources[source_map.source])
+            if not source_map.specifier:
+                s: StreamInfo = info.get_streams()[source_map.stream]
+                if s.stream_type == "video":
+                    return s
+                continue
+            elif source_map.specifier == "v":
+                return info.get_streams("video")[source_map.stream]
+                
 
     @property
     def output_file(self) -> Path:

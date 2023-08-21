@@ -142,8 +142,6 @@ class Ffprobe:
 
 
 if __name__ == "__main__":
-    a = Ffprobe("test.mkv")
+    a = Ffprobe("test.mkv", count_frames=True)
     print(a.ffprobe_path)
     [print(f'- {i}') for i in a.get_streams()]
-    print()
-    [print(f'- {i}') for i in a.get_streams('audio')]

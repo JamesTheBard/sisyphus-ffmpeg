@@ -190,26 +190,14 @@ This JSON example file has the exact same information in it as the "pure Python"
 
 ### Progress Bars
 
-The `sisyphus-ffmpeg` module can simplify the output of the encode to only show progress.  This is a bit rudimentary, but you can pass the frame information for the video stream you're encoding and have it display a progress bar.
-
-Basically it requires the `Ffmpeg.settings.progress_bar` to be set to `True`, that you provide the video information from the source with the video information in it, and that when running the encode you do not enable `verbose`.
+The `sisyphus-ffmpeg` module can simplify the output of the encode to only show progress.  The `ffmpeg` module will search for the first video stream from the stream map and use that stream's frame count for the progress bar.  To use it, simply set `Ffmpeg.settings.progress_bar` to true and call the encode with no options.
 
 ```python
 from ffmpeg import Ffmpeg
-from ffprobe import Ffprobe
 
 # Create the Ffmpeg instance and load the configuration.
 ff = Ffmpeg()
 ff.load_from_file("test.json")
-
-# Since we're pulling video from the first source, let's get all of the
-# information from that source.
-info = Ffprobe(media_path=ff.sources[0])
-
-# Pass the video stream information into Ffmpeg. This passes the first video
-# stream information into the settings so the progress bar knows how many
-# frames it needs to track in total.
-ff.settings.video_info = info.get_streams('video')[0]
 
 # Enable the progress bar.
 ff.settings.progress_bar = True

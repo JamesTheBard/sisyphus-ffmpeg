@@ -5,7 +5,10 @@ description = "A Python library that wraps `ffmpeg` into a more convenient inter
 authors = ["JamesTheBard <jamesthebard@gmail.com>"]
 license = "GPL-3.0-or-later"
 readme = "README.md"
-packages = [{include = "ffmpeg.py"}]
+packages = [
+    {include = "ffmpeg.py"},
+    {include = "ffprobe.py"}
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"

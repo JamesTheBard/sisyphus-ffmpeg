@@ -67,8 +67,7 @@
           "stream",
           "options"
         ],
-        "minItems": 1,
-        "additionalProperties": false
+        "minItems": 1
       }
     },
     "output_file": {

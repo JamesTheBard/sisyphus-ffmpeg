@@ -70,13 +70,15 @@ class OutputMap:
         specifier (str, optional): The type of stream denoted by a single character. Defaults to None.
         stream (int, optional): The zero indexed stream to use post-source mapping. Defaults to None.
         options (dict): `ffmpeg` options associated with the stream type for processing.
+        option_set (str): The title of a set of options to be loaded from a remote location. Defaults to None.
     """
     specifier: Optional[str]
     stream: Optional[int]
     options: dict
+    option_set: str
 
     def __init__(
-        self, specifier: Optional[str] = None, stream: Optional[int] = None, options: Optional[dict] = None
+        self, specifier: Optional[str] = None, stream: Optional[int] = None, options: Optional[dict] = None, option_set: str = None
     ):
         """Initialize an `ffmpeg` output map.
 
@@ -84,6 +86,7 @@ class OutputMap:
             specifier (str, optional): The type of stream denoted by a single character. Defaults to None.
             stream (int, optional): The zero indexed stream to use post-source mapping. Defaults to None.
             options (dict, optional): `ffmpeg` options associated with the stream type for processing. Defaults to None.
+            option_set (str): The title of a set of options to be loaded from a remote location. Defaults to None.
         """
         self.specifier = specifier[0].lower() if specifier else None
         self.stream = stream
@@ -91,6 +94,7 @@ class OutputMap:
             self.options = options
         else:
             self.options = dict()
+        self.option_set = option_set
 
     @property
     def cli_options(self):

@@ -178,6 +178,9 @@ class Ffmpeg:
 
         Args:
             file_path (Union[Path, str]): The JSON file to load.
+
+        Raises:
+            jsonschema.ValidationError: If the JSON file does not pass validation.
         """
 
         file_path = Path(file_path)
@@ -191,18 +194,16 @@ class Ffmpeg:
 
         Args:
             data (Union[Box, dict]): The data object to load info from.
+
+        Raises:
+            jsonschema.ValidationError: If the data does not pass validation.
         """
         schema = Path("schema/ffmpeg.schema.json")
         schema = self.schema_path / schema
         with schema.open('r') as f:
             schema_data = json.load(f)
 
-        try:
-            jsonschema.validate(data, schema_data)
-        except jsonschema.ValidationError as e:
-            print(
-                f"Could not validate the JSON/object data against the schema: {e.message}")
-            sys.exit(100)
+        jsonschema.validate(data, schema_data)
 
         data = Box(data)
         try:

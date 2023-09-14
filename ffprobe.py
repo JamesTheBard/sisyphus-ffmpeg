@@ -99,10 +99,10 @@ class Ffprobe:
             elif "nb_frames" in stream.keys():
                 frames = stream.nb_frames
             elif "tags" in stream.keys():
-                stream_keys = stream.keys()
-                if f"NUMBER_OF_FRAMES-{lang}" in stream_keys:
+                tags = stream.tags.keys()
+                if f"NUMBER_OF_FRAMES-{lang}" in tags:
                     frames = getattr(stream.tags, f"NUMBER_OF_FRAMES-{lang}")
-                elif f"NUMBER_OF_FRAMES" in stream_keys:
+                elif f"NUMBER_OF_FRAMES" in tags:
                     frames = getattr(stream.tags, "NUMBER_OF_FRAMES")
                 else:
                     frames = None

@@ -1,4 +1,5 @@
 import json
+import os
 import platform
 import re
 import shlex
@@ -168,6 +169,7 @@ class Ffmpeg:
             self.ffmpeg_path = Path(shutil.which(binary))
         self.sources = list()
         self.source_maps = list()
+        self.schema_path = Path(os.path.dirname(os.path.abspath(__file__)))
         self.output_maps = list()
         self.settings = FfmpegMiscSettings()
 
@@ -191,6 +193,7 @@ class Ffmpeg:
             data (Union[Box, dict]): The data object to load info from.
         """
         schema = Path("schema/ffmpeg.schema.json")
+        schema = self.schema_path / schema
         with schema.open('r') as f:
             schema_data = json.load(f)
 

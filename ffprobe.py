@@ -93,12 +93,19 @@ class Ffprobe:
             else:
                 bitrate = None
 
+            lang = stream.tags.get("language", None) if "tags" in stream.keys() else None
             if "nb_read_frames" in stream.keys():
                 frames = stream.nb_read_frames
             elif "nb_frames" in stream.keys():
                 frames = stream.nb_frames
             elif "tags" in stream.keys():
-                frames = getattr(stream.tags, "NUMBER_OF_FRAMES", None)
+                stream_keys = stream.keys()
+                if f"NUMBER_OF_FRAMES-{lang}" in stream_keys:
+                    frames = getattr(stream.tags, f"NUMBER_OF_FRAMES-{lang}")
+                elif f"NUMBER_OF_FRAMES" in stream_keys:
+                    frames = getattr(stream.tags, "NUMBER_OF_FRAMES")
+                else:
+                    frames = None
             else:
                 frames = None
 
@@ -107,7 +114,7 @@ class Ffprobe:
                     codec_long=stream.codec_long_name,
                     codec=stream.codec_name,
                     stream=idx,
-                    language=stream.tags.get("language", None) if "tags" in stream.keys() else None,
+                    language=lang,
                     bitrate=int(bitrate) if bitrate else None,
                     forced=bool(stream.disposition.forced),
                     default=bool(stream.disposition.default),

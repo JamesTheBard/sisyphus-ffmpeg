@@ -107,7 +107,7 @@ class Ffprobe:
                     codec_long=stream.codec_long_name,
                     codec=stream.codec_name,
                     stream=idx,
-                    language=stream.tags.language if "tags" in stream.keys() else None,
+                    language=stream.tags.get("language", None) if "tags" in stream.keys() else None,
                     bitrate=int(bitrate) if bitrate else None,
                     forced=bool(stream.disposition.forced),
                     default=bool(stream.disposition.default),

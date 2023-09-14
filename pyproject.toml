@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sisyphus-ffmpeg"
-version = "0.9.0"
+version = "0.9.1"
 description = "A Python library that wraps `ffmpeg` into a more convenient interface."
 authors = ["JamesTheBard <jamesthebard@gmail.com>"]
 license = "GPL-3.0-or-later"
@@ -9,6 +9,7 @@ packages = [
     {include = "ffmpeg.py"},
     {include = "ffprobe.py"}
 ]
+include = ["schema/ffmpeg.schema.json"]
 
 [tool.poetry.dependencies]
 python = "^3.11"

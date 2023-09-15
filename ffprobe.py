@@ -86,24 +86,27 @@ class Ffprobe:
 
         streams = list()
         for idx, stream in enumerate(output.streams):
+            lang = stream.tags.get("language", None) if "tags" in stream.keys() else None
+
             if "bit_rate" in stream.keys():
                 bitrate = stream.bit_rate
             elif "tags" in stream.keys():
-                bitrate = getattr(stream.tags, "BPS", None)
+                tags = [i for i in stream.tags.keys() if i.startswith('BPS')]
+                if tags:
+                    bitrate = getattr(stream.tags, tags[0])
+                else:
+                    bitrate = None
             else:
                 bitrate = None
 
-            lang = stream.tags.get("language", None) if "tags" in stream.keys() else None
             if "nb_read_frames" in stream.keys():
                 frames = stream.nb_read_frames
             elif "nb_frames" in stream.keys():
                 frames = stream.nb_frames
             elif "tags" in stream.keys():
-                tags = stream.tags.keys()
-                if f"NUMBER_OF_FRAMES-{lang}" in tags:
-                    frames = getattr(stream.tags, f"NUMBER_OF_FRAMES-{lang}")
-                elif f"NUMBER_OF_FRAMES" in tags:
-                    frames = getattr(stream.tags, "NUMBER_OF_FRAMES")
+                tags = [i for i in stream.tags.keys() if i.startswith('NUMBER_OF_FRAMES')]
+                if tags:
+                    frames = getattr(stream.tags, tags[0])
                 else:
                     frames = None
             else:

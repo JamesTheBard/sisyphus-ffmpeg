@@ -18,6 +18,13 @@ ff.sources = [
     "source_file_2.ac3",
 ]
 
+# Add the "input_options" to use, things like 'ss' and 'to' for specifying
+# a certain part of the input to process.
+ff.main_options = {
+  "ss": "0:10:00",
+  "to": "0:20:00",
+}
+
 # Define all of the source maps which map a stream from a given
 # source (zero-indexed) and a stream that will be ultimately proccessed
 # and muxed into the output file.  When using specifiers, the stream
@@ -122,6 +129,10 @@ This JSON example file has the exact same information in it as the "pure Python"
 
 ```json
 {
+  "input_options": {
+    "ss": "00:10:00",
+    "to": "00:11:00"
+  },
   "sources": [
     "source_file_1.mkv",
     "source_file_2.ac3"

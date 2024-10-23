@@ -1,4 +1,8 @@
 {
+  "input_options": {
+    "ss": "00:10:00",
+    "to": "00:11:00"
+  },
   "sources": [
     "source_file_1.mkv",
     "source_file_2.ac3"

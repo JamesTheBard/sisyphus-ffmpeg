@@ -4,6 +4,32 @@
   "description": "The Sisyphus ffmpeg schema to import `ffmpeg` options.",
   "type": "object",
   "properties": {
+    "input_options": {
+      "description": "Main options for `ffmpeg` placed before the input files.",
+      "type": "object",
+      "properties": {
+        "stream_loop": {
+          "description": "Set number of times input stream shall be looped",
+          "type": "number"
+        },
+        "recast_media": {
+          "description": "Allow forcing a decoder of a different media type than the one detected.",
+          "type": "boolean"
+        },
+        "ss": {
+          "description": "The starting position to start reading from (start stream)",
+          "type": "string"
+        },
+        "to": {
+          "description": "Stop reading the input at the specified position",
+          "type": "string"
+        },
+        "t": {
+          "description": "Stop reading the input after the specified duration",
+          "type": "string"
+        }
+      }
+    },
     "sources": {
       "description": "The source files for ffmpeg to use.",
       "type": "array",

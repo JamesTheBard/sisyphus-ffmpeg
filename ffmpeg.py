@@ -146,6 +146,7 @@ class Ffmpeg:
     """The `ffmpeg` class responsible for generating command-line options and running the actual encode.
 
     Attributes:
+        input_options (dict): The input settings to use for the encode.
         input_files (List[Path]): The source files to use for the encode.
         output_file (Path): The output file for the encode.
         source_maps (List[SourceMap]): All of the source maps for the input files.
@@ -153,6 +154,7 @@ class Ffmpeg:
         settings (FfmpegMiscSettings): Miscellaneous `ffmpeg` settings.
     """
 
+    main_options: dict[str, any]
     input_files: List[Union[str, Path]]
     output_file: Path
     source_maps: List[SourceMap]
@@ -175,6 +177,7 @@ class Ffmpeg:
         self.source_maps = list()
         self.schema_path = Path(os.path.dirname(os.path.abspath(__file__)))
         self.output_maps = list()
+        self.main_options = dict()
         self.settings = FfmpegMiscSettings()
 
     def load_from_file(self, file_path: Union[Path, str]) -> None:
@@ -218,6 +221,7 @@ class Ffmpeg:
         self.output_file = data.output_file
         self.source_maps = [SourceMap(**i) for i in data.source_maps]
         self.output_maps = [OutputMap(**i) for i in data.output_maps]
+        self.main_options = dict(data.input_options)
 
     def generate_command(self) -> str:
         """Generate the entire `ffmpeg` command to include command-line options.
@@ -229,12 +233,27 @@ class Ffmpeg:
         command.append(f'"{self.ffmpeg_path}"')
         if self.settings.overwrite:
             command.append("-y")
+        command.extend(self.generate_main_options())
         command.extend(["-progress", "pipe:1"])
         [command.append(f'-i "{i}"') for i in self.sources]
         [command.extend(i.cli_options.split()) for i in self.source_maps]
         [command.extend(i.cli_options.split()) for i in self.output_maps]
         command.append(f'"{str(self.output_file.absolute())}"')
         return ' '.join(command)
+
+    def generate_main_options(self) -> list:
+        """Generate the command-line options from the input options.
+
+        Returns:
+            list: A list of command-line options.
+        """
+        command = list()
+        for k, v in self.main_options.items():
+            if isinstance(v, bool) and v:
+                command.append(f"-{k}")
+            else:
+                command.extend((f"-{k}", str(v)))
+        return command
 
     def run(self, verbose: bool = False) -> None:
         """Run the `ffmpeg` encode.

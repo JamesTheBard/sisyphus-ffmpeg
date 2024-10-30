@@ -221,7 +221,11 @@ class Ffmpeg:
         self.output_file = data.output_file
         self.source_maps = [SourceMap(**i) for i in data.source_maps]
         self.output_maps = [OutputMap(**i) for i in data.output_maps]
-        self.main_options = dict(data.input_options)
+        
+        if "input_options" in data.keys():
+            self.main_options = dict(data.input_options)
+        else:
+            self.main_options = dict()
 
     def generate_command(self) -> str:
         """Generate the entire `ffmpeg` command to include command-line options.

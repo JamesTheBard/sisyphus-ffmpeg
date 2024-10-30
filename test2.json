@@ -1,0 +1,60 @@
+{
+    "input_options": {
+      "ss": "0:10:00",
+      "to": "0:20:00"
+    },
+    "sources": [
+      "source_file_1.mkv",
+      "source_file_2.ac3"
+    ],
+    "source_maps": [
+      {
+        "source": 0,
+        "specifier": "v",
+        "stream": 0
+      },
+      {
+        "source": 1,
+        "specifier": "a",
+        "stream": 0
+      },
+      {
+        "source": 0,
+        "specifier": "s",
+        "stream": 0
+      }
+    ],
+    "output_maps": [
+      {
+        "specifier": "v",
+        "stream": 0,
+        "options": {
+          "codec": "libx265",
+          "crf": 19,
+          "pix_fmt": "yuv420p10le",
+          "preset": "slow",
+          "x265-params": {
+            "limit-sao": 1,
+            "bframes": 8,
+            "psy-rd": 1,
+            "psy-rdoq": 2,
+            "aq-mode": 3
+          }
+        }
+      },
+      {
+        "specifier": "a",
+        "stream": 0,
+        "option_set": "opus-128k-stereo"
+      },
+      {
+        "specifier": "s",
+        "stream": 0,
+        "options": {
+          "codec": "copy"
+        }
+      }
+    ],
+    "output_file": "/shared/output_file.mkv",
+    "overwrite": true
+  }
